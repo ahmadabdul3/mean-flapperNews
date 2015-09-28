@@ -1,25 +1,41 @@
 angular.module('httpService', [])
 .factory('httpService', httpService);
 
-httpService.$inject = ['$http'];
+httpService.$inject = ['$http', '$q'];
 
-function httpService($http) {
+function httpService($http, $q) {
 
-	function simpleGet(url) {
+	function baseGet(url) {
 		return $http.get(url).then(
                 function (result) {
-                    return result.data;
+                    return result;
                 },
                 function (result) {
-                    $q.reject(result.data);
+                    return $q.reject(result);
                 }
-                success(function(data){
-	      angular.copy(data, o.posts);
-	    });
+                );
 	}
+	function httpWithParams(url, method, data) {
+		return $http({
+                url: url,
+                method: method,
+                params: data
+            }).then(
+                function (result) {
+                    return result;
+                },
+                function (result) {
+                    return $q.reject(result);
+                }
+            );
+	}
+    function handleError(error) {
+            console.log(error);
+    }
 
 	return {
-		simpleGet: simpleGet,
-		getWithParams: getWithParams
+		baseGet: baseGet,
+		httpWithParams: httpWithParams,
+		handleError: handleError
 	}
 }

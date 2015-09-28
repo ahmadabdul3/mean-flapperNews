@@ -10,7 +10,13 @@ function indexStates($stateProvider, $urlRouterProvider) {
 	.state('home', {
 		url: '/home',
 		templateUrl: 'home.html',
-		controller: 'indexController as indexCtrl'
+		controller: 'indexController as indexCtrl',
+		resolve: {
+			postPromise: postsServiceWrapper
+		    /*postPromise: ['postsService', function(postsService){
+		      return postsService.getAllPosts();
+		    }]*/
+		}
 	})
 	.state('posts', {
 	  url: '/posts/{id}',
@@ -20,4 +26,9 @@ function indexStates($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise('/home');
 
 
+}
+
+postsServiceWrapper.$inject = ['postsService'];
+function postsServiceWrapper(postsService) {
+	return postsService.getAllPosts();
 }

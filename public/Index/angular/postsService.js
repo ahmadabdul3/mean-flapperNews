@@ -1,8 +1,13 @@
 angular.module('flapperNews')
 .factory('postsService', postsService);
 
-function postsService() {
+postsService.$inject = ['httpService'];
+
+function postsService(httpService) {
 	var serv = this;
+	var httpUrls = {
+		posts: '/posts'
+	};
 	var posts = [
 	  {id: 1, title: 'post 1', link: '', upvotes: 5, comments: []},
 	  {id: 2, title: 'post 2', link: '',  upvotes: 2, comments: []},
@@ -12,6 +17,15 @@ function postsService() {
 	];
 	function getPosts() {
 		return posts;
+	}
+	function getAllPosts() {
+		httpService.baseGet(httpUrls.posts)
+		.then(function(data) {
+			angular.copy(data, posts);
+			posts.push({title: 'post test', link: '', upvotes: 3, comments: []});
+		}, function(data) {
+			httpService.handleError(data);
+		});
 	}
 	function addPost(title, link) {
 		if(!title || title === '') { return; }
@@ -35,7 +49,8 @@ function postsService() {
 		getPosts: getPosts,
 		addPost: addPost,
 		incrementUpvotesForPost: incrementUpvotesForPost,
-		getPostByIndex: getPostByIndex
+		getPostByIndex: getPostByIndex,
+		getAllPosts: getAllPosts
 	}
 
 }
