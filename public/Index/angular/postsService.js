@@ -27,6 +27,15 @@ function postsService(httpService) {
 			httpService.handleError(data);
 		});
 	}
+	function createPost(post) {
+		if(!post.title || post.title === '') { return; }
+		httpService.httpWithParams(httpUrls.posts, httpService.methods.httpPost, post)
+		.then(function(data) {
+			posts.push(data);
+		}, function(data) {
+			log(data);
+		});
+	}
 	function addPost(title, link) {
 		if(!title || title === '') { return; }
 		posts.push({
@@ -50,7 +59,11 @@ function postsService(httpService) {
 		addPost: addPost,
 		incrementUpvotesForPost: incrementUpvotesForPost,
 		getPostByIndex: getPostByIndex,
-		getAllPosts: getAllPosts
+		getAllPosts: getAllPosts,
+		createPost: createPost
+	}
+	function log(msg) {
+		console.log(msg);
 	}
 
 }

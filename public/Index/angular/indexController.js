@@ -9,9 +9,9 @@ function indexController(postsService) {
 	
 	vm.Posts = postsService.getPosts;
 	vm.addPost = function() {
-		postsService.addPost(vm.title, vm.link);
+		postsService.createPost({title: vm.title, link: vm.link});
 		clearPostData();
-	}
+	};
 	vm.incrementUpvotesForPost = postsService.incrementUpvotesForPost;
 
 	function clearPostData() {

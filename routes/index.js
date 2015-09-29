@@ -9,31 +9,31 @@ var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   //res.render('index', { title: 'Express' });
   res.write(templateFn({name: 'index'}));
   res.end();
 });
 
-router.get('/posts', function(req, res, next) {
-	Post.find(function(err, posts) {
+router.get('/posts', function (req, res, next) {
+	Post.find(function (err, posts) {
 		if(err) {return next(err);}
 
 		res.json(posts);
 	});
 });
 
-router.post('/posts', function(req, res, next) {
-  var post = new Post(req.body);
-
-  post.save(function(err, post){
+router.post('/posts', function (req, res, next) {
+	//changed req.body to req.query because body is coming back empty
+  var post = new Post(req.query);
+  console.log(req.body);
+  post.save(function (err, persistedPost){
     if(err){ return next(err); }
-
-    res.json(post);
+    res.json(persistedPost);
   });
 });
 
-router.param('post', function(req, res, next, id) {
+router.param('post', function (req, res, next, id) {
   var query = Post.findById(id);
 
   query.exec(function (err, post){
@@ -45,31 +45,31 @@ router.param('post', function(req, res, next, id) {
   });
 });
 
-router.get('/posts/:post', function(req, res, next) {
-  req.post.populate('comments', function(err, post) {
+router.get('/posts/:post', function (req, res, next) {
+  req.post.populate('comments', function (err, post) {
     if (err) { return next(err); }
 
     res.json(post);
   });
 });
 
-router.put('/posts/:post/upvote', function(req, res, next) {
-	req.post.upvote(function(err, post) {
+router.put('/posts/:post/upvote', function (req, res, next) {
+	req.post.upvote(function (err, post) {
 		if(err) {return next(err);}
 
 		res.json(post);
 	});
 });
 
-router.post('/posts/:post/comments', function(req, res, next) {
+router.post('/posts/:post/comments', function (req, res, next) {
   var comment = new Comment(req.body);
   comment.post = req.post;
 
-  comment.save(function(err, comment){
+  comment.save(function (err, comment){
     if(err){ return next(err); }
 
     req.post.comments.push(comment);
-    req.post.save(function(err, post) {
+    req.post.save(function (err, post) {
       if(err){ return next(err); }
 
       res.json(comment);
@@ -77,7 +77,7 @@ router.post('/posts/:post/comments', function(req, res, next) {
   });
 });
 
-router.param('comment', function(req, res, next, id) {
+router.param('comment', function (req, res, next, id) {
   var query = Comment.findById(id);
 
   query.exec(function (err, comment){
@@ -89,8 +89,8 @@ router.param('comment', function(req, res, next, id) {
   });
 });
 
-router.put('/posts/:post/comments/:comment/upvote', function(req, res, next) {
-  req.comment.upvote(function(err, comment){
+router.put('/posts/:post/comments/:comment/upvote', function (req, res, next) {
+  req.comment.upvote(function (err, comment){
     if (err) { return next(err); }
 
     res.json(comment);

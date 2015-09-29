@@ -4,11 +4,17 @@ angular.module('httpService', [])
 httpService.$inject = ['$http', '$q'];
 
 function httpService($http, $q) {
-
+	var serv = this;
+	var methods = {
+		httpGet : 'GET',
+		httpPost : 'POST',
+		httpPut : 'PUT',
+		httpDelete : 'DELETE'
+	};
 	function baseGet(url) {
 		return $http.get(url).then(
                 function (result) {
-                    return result;
+                    return result.data;
                 },
                 function (result) {
                     return $q.reject(result);
@@ -16,13 +22,19 @@ function httpService($http, $q) {
                 );
 	}
 	function httpWithParams(url, method, data) {
+		
 		return $http({
                 url: url,
                 method: method,
-                params: data
+                params: data,
+                dataType: "json",
+			    headers: {
+			        "Content-Type": "application/json"
+			    }
             }).then(
                 function (result) {
-                    return result;
+                	console.log(result.data);
+                    return result.data;
                 },
                 function (result) {
                     return $q.reject(result);
@@ -36,6 +48,7 @@ function httpService($http, $q) {
 	return {
 		baseGet: baseGet,
 		httpWithParams: httpWithParams,
-		handleError: handleError
+		handleError: handleError,
+		methods: methods
 	}
 }
